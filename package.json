@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/JenJayme/template-engine/issues"
   },
-  "homepage": "https://github.com/JenJayme/template-engine#readme"
+  "homepage": "https://github.com/JenJayme/template-engine#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^7.3.2",
+    "path": "^0.12.7"
+  }
 }
