@@ -1,6 +1,6 @@
-const Manager = require("./Develop/lib/Manager");
-const Engineer = require("./Develop/lib/Engineer");
-const Intern = require("./Develop/lib/Intern");
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -8,10 +8,10 @@ const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
-const render = require("./Develop/lib/htmlRenderer");
+const render = require("./lib/htmlRenderer");
 
 //OBJECT TO HOLD EMPLOYEE DATA
-const employeeData = [];
+const employees = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -52,20 +52,37 @@ let questions = [
         }
 ]
 
-function getEmployeeData() {
+function Employee(name, role, id, title, email) {
     return inquirer.prompt(questions).then(function (userInput) {
         console.log("userInput: ", userInput);
-        employeeData.name = userInput.name,
-        employeeData.role = userInput.role,
-        employeeData.id = userInput.id,
-        employeeData.title = userInput.title,
-        employeeData.email = userInput.email,
-        employeeData.officeNumber = userInput.officeNumber,
-        employeeData.gitHubURL = userInput.gitHubURL,
-        employeeData.school = userInput.school,
-        console.log("employeeData: ", employeeData);
+        employees.name = userInput.name,
+        employees.id = userInput.id,
+        employees.email = userInput.email,
+        employees.role = userInput.role,
+        employees.officeNumber = userInput.officeNumber,
+        employees.gitHubURL = userInput.gitHubURL,
+        employees.school = userInput.school,
+        console.log("employeeData: ", this);
     })
 };
+
+// The first class is an `Employee` parent class with the following properties and methods:
+
+Employee.prototype.printInfo = function() {
+    console.log("Name: " + this.name + "\nRole: " + this.role +"\nID: " + this.id + "\nTitle: " + this.title + "\nEmail: " + this.email +"\nOffice Number " + this.officeNumber + "\nGit Hub URL: " + this.gitHubURL + "\nSchool: " + this.school)
+  };
+
+Employee.prototype.LogInfo = function LogInfo() {
+    console.log(`${this.name} has ${this.hp} hit points and ${this.strength} strength`);
+};
+
+
+// creates two unique employees using the "employee" constructor
+var michaelScott = new Employee("Michael Scott", "Manager", 25586, "Regional Manager", "mscott@dundermifflin.com");
+
+var dwightSchrute = new Employee("Michael Scott", "Manager", 25586, "Original Assistant to the Regional Manager", "dschrute@dundermifflin.com");
+
+console.log(employees);
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -87,9 +104,10 @@ function getEmployeeData() {
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
 
-getEmployeeData();
+//====================================================
 
 // async function init() {
+//     Employee();
     // await getEmployeeData();
     // writeFile(employeeData);
 // } 
