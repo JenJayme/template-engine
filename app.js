@@ -3,7 +3,6 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
-inquirer.registerPrompt('recursive', require('inquirer-recursive'));
 const path = require("path");
 const fs = require("fs");
 
@@ -12,11 +11,13 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-//OBJECT TO HOLD EMPLOYEE DATA
-const employeeData = {};
-const employees = [];
-
 // Write code to use inquirer to gather information about the development team members, and to create objects for each team member (using the correct classes as blueprints!)
+
+//OBJECT TO HOLD EMPLOYEE DATA
+var employeeData = {};
+var employees = [];
+
+//VARIABLE TO GENERATE ID #s BY ADDING
 
 let questions = [
     {
@@ -41,7 +42,6 @@ let questions = [
         name: "addMore",
         message: "Add another employee?"
     }
-
 ]
 
 let questionManager = {
@@ -62,37 +62,43 @@ let questionIntern = {
     message: "Intern's school: "
 }
 
-function AddEmployee() {
-    return inquirer.prompt(questions).then(function (userInput) {
-        console.log("userInput: ", userInput);
-        var empToAdd = userInput;
-        employeeData.name = userInput.name,
-            employeeData.role = userInput.role,
-            employeeData.id = userInput.id,
-            employeeData.email = userInput.email,
-            console.log("employeeData: ", employeeData);
-        employees.push(empToAdd);
-        console.log("Employees: " + employees);
-    })
-};
+// function AddEmployee() {
+//     return inquirer.prompt(questions).then(function (userInput) {
+//         console.log("userInput: ", userInput);
+//         var employeeData = userInput;
+//             employeeData.name = userInput.name,
+//             employeeData.role = userInput.role,
+//             employeeData.id = userInput.id,
+//             employeeData.email = userInput.email,
+//             console.log("employeeData: ", employeeData);
+//         employees.push(empToAdd);
+//         console.log("Employees: " + employees);
+//         return employees;
+//     })
+// };
 
 function ask() {
     return inquirer.prompt(questions).then((answers) => {
-      employees.push(answers);
+    //   employees.push(answers);
+      console.log("userInput: ", userInput);
+      var employeeData = userInput;
+          employeeData.name = userInput.name,
+          employeeData.role = userInput.role,
+          employeeData.id = userInput.id,
+          employeeData.email = userInput.email,
+          console.log("employeeData: ", employeeData);
+          employees.push(empToAdd);
       if (answers.addMore) { 
         ask()
       } else {
         console.log('Your answers are saved!');
+        return employees;
       }
     });
   }
             // employeeData.officeNumber = userInput.officeNumber,
             // employeeData.gitHubURL = userInput.gitHubURL,
             // employeeData.school = userInput.school,
-
-
-ask();
-// render();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -116,8 +122,74 @@ ask();
 
 //====================================================
 
-// async function init() {
-//     Employee();
-    // await getEmployeeData();
-    // writeFile(employeeData);
-// }
+async function init() {
+    await ask();
+    render();
+}
+
+async function init() {
+
+    var moreEmployees = 'yes';
+    var id_tracker = 1;
+    const employee_list = [];
+
+while (moreEmployees === 'yes') {
+    try {
+        const { role } = await inquirer.prompt([
+            { type: "list", message: "Which kind of employee would you like to add?", choices: ["Engineer", "Intern", "Office Manager"], name: "role" }
+        ])
+
+        const arguments = [];
+
+        var general_responses = await inquirer.prompt([
+            { type: "input", message: `What is the name of the ${role}?`, name: "name" },
+            { type: "input", message: `What is the email of the ${role}?`, name: "email" }
+        ])
+
+        arguments.push(general_responses.name);
+        arguments.push(id_tracker);
+        id_tracker += 1;
+        arguments.push(general_responses.email);
+
+        var employee;
+
+        if (role === "Engineer") {
+            var response = await inquirer.prompt({ type: "input", message: "What is the engineer's Github username?", name: "github" })
+            arguments.push(response.github)
+            employee = new Engineer(...arguments)
+        }
+        else if (role === "Intern") {
+            var response = await inquirer.prompt({ type: "input", message: "Where does the intern go to school?", name: "school" })
+            arguments.push(response.school)
+            employee = new Intern(...arguments)
+        }
+        else if (role === "Office Manager") {
+            var response = await inquirer.prompt({ type: "input", message: "What is the office manager's room number?", name: "room_number" })
+            arguments.push(response.room_number)
+            employee = new Manager(...arguments)
+        }
+
+        employee_list.push(employee)
+
+        var ask_again = await inquirer.prompt({type:"list", message:"Do you want to add another employee?", choices:['yes', 'no'], name:"again"})
+        moreEmployees = ask_again.again
+
+
+
+
+    } catch (error) {
+        throw error
+    }
+}
+var html = render(employee_list)
+fs.writeFile(outputPath, html, err => {
+    if (err) {
+        throw err
+    }
+    else {
+        console.log("Successfully created HTML file in the output folder.")
+    }
+})
+}
+
+init()
