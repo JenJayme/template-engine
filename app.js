@@ -106,14 +106,6 @@ function ask() {
     });
   }
 
-// function batchEnter() {
-//     if (addMore) { 
-//         askType()
-//       } else {
-//         console.log('Your answers are saved!');
-//       }
-// };
-
 function createEmployeeRecords(employees) {
     if (employeeData.role === 'Engineer') {
         var employee = new Engineer(employeeData.name, employeeData.id, employeeData.email, employeeData.github)
