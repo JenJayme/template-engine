@@ -16,16 +16,7 @@ const render = require("./lib/htmlRenderer");
 const employeeData = {};
 const employees = [];
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// function addBatch() {
-// inquirer.prompt([{
-//     type: 'recursive',
-//     message: 'Add another employee?',
-//     name: 'addmore',
-//     prompts: questions,
-// }])
+// Write code to use inquirer to gather information about the development team members, and to create objects for each team member (using the correct classes as blueprints!)
 
 let questions = [
     {
@@ -45,7 +36,12 @@ let questions = [
         type: "input",
         name: "email",
         message: "Employee email: "
+    }, {
+        type: "confirm",
+        name: "addMore",
+        message: "Add another employee?"
     }
+
 ]
 
 let questionManager = {
@@ -66,7 +62,6 @@ let questionIntern = {
     message: "Intern's school: "
 }
 
-
 function AddEmployee() {
     return inquirer.prompt(questions).then(function (userInput) {
         console.log("userInput: ", userInput);
@@ -75,18 +70,29 @@ function AddEmployee() {
             employeeData.role = userInput.role,
             employeeData.id = userInput.id,
             employeeData.email = userInput.email,
-            // employeeData.officeNumber = userInput.officeNumber,
-            // employeeData.gitHubURL = userInput.gitHubURL,
-            // employeeData.school = userInput.school,
             console.log("employeeData: ", employeeData);
-        employees.push(employeeData)
+        employees.push(empToAdd);
         console.log("Employees: " + employees);
     })
 };
 
-// addBatch();
-AddEmployee();
-render();
+function ask() {
+    return inquirer.prompt(questions).then((answers) => {
+      employees.push(answers);
+      if (answers.addMore) { 
+        ask()
+      } else {
+        console.log('Your answers are saved!');
+      }
+    });
+  }
+            // employeeData.officeNumber = userInput.officeNumber,
+            // employeeData.gitHubURL = userInput.gitHubURL,
+            // employeeData.school = userInput.school,
+
+
+ask();
+// render();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
