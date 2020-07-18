@@ -17,4 +17,13 @@ function printInfo(name) {
     console.log(`Email: ${employeeData.email}`);
     console.log(`ID: ${employeeData.id}`);
     console.log("------------");
-  }
+}
+
+    //   employees.push(answers);
+    //   employeeData.name = userInput.name,
+    //   employeeData.role = userInput.role,
+    //   employeeData.id = userInput.id,
+    //   employeeData.email = userInput.email
+    // employeeData.officeNumber = userInput.officeNumber,
+    // employeeData.gitHubURL = userInput.gitHubURL,
+    // employeeData.school = userInput.school,
