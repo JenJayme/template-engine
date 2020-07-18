@@ -1,7 +1,9 @@
+const Employee = require("./lib/Employee");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
+inquirer.registerPrompt('recursive', require('inquirer-recursive'));
 const path = require("path");
 const fs = require("fs");
 
@@ -11,78 +13,80 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 //OBJECT TO HOLD EMPLOYEE DATA
+const employeeData = {};
 const employees = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
+// function addBatch() {
+// inquirer.prompt([{
+//     type: 'recursive',
+//     message: 'Add another employee?',
+//     name: 'addmore',
+//     prompts: questions,
+// }])
+
 let questions = [
-        {
-            type: "input",
-            name: "name",
-            message: "Please enter the employee name"
-        }, {
-            type: "input",
-            name: "role",
-            message: "Is employee a (1) Manager, (2) Engineer, or (3) Intern?"
-        }, {
-            type: "input",
-            name: "id",
-            message: "Please enter the employee ID:"
-        }, {
-            type: "input",
-            name: "title",
-            message: "Employee position: "
-        }, {
-            type: "input",
-            name: "email",
-            message: "Employee email: "
-        }, {
-            type: "input",
-            name: "officeNumber",
-            message: "Manager's office number: "
-        }, {
-            type: "input",
-            name: "gitHubURL",
-            message: "Engineer's github URL "
-        }, {
-            type: "input",
-            name: "school",
-            message: "Intern's school: "
-        }
+    {
+        type: "input",
+        name: "name",
+        message: "Please enter the employee name"
+    }, {
+        type: "list",
+        name: "role",
+        message: "Type of employee?",
+        choices: ['Manager', 'Engineer', 'Intern']
+    }, {
+        type: "input",
+        name: "id",
+        message: "Please enter the employee ID:"
+    }, {
+        type: "input",
+        name: "email",
+        message: "Employee email: "
+    }
 ]
 
-function Employee(name, role, id, title, email) {
+let questionManager = {
+    type: "input",
+    name: "officeNumber",
+    message: "Manager's office number: "
+}
+
+let questionEngineer = {
+    type: "input",
+    name: "gitHubURL",
+    message: "Engineer's github URL "
+}
+
+let questionIntern = {
+    type: "input",
+    name: "school",
+    message: "Intern's school: "
+}
+
+
+function AddEmployee() {
     return inquirer.prompt(questions).then(function (userInput) {
         console.log("userInput: ", userInput);
-        employees.name = userInput.name,
-        employees.id = userInput.id,
-        employees.email = userInput.email,
-        employees.role = userInput.role,
-        employees.officeNumber = userInput.officeNumber,
-        employees.gitHubURL = userInput.gitHubURL,
-        employees.school = userInput.school,
-        console.log("employeeData: ", this);
+        var empToAdd = userInput;
+        employeeData.name = userInput.name,
+            employeeData.role = userInput.role,
+            employeeData.id = userInput.id,
+            employeeData.email = userInput.email,
+            // employeeData.officeNumber = userInput.officeNumber,
+            // employeeData.gitHubURL = userInput.gitHubURL,
+            // employeeData.school = userInput.school,
+            console.log("employeeData: ", employeeData);
+        employees.push(employeeData)
+        console.log("Employees: " + employees);
     })
 };
 
-// The first class is an `Employee` parent class with the following properties and methods:
-
-Employee.prototype.printInfo = function() {
-    console.log("Name: " + this.name + "\nRole: " + this.role +"\nID: " + this.id + "\nTitle: " + this.title + "\nEmail: " + this.email +"\nOffice Number " + this.officeNumber + "\nGit Hub URL: " + this.gitHubURL + "\nSchool: " + this.school)
-  };
-
-Employee.prototype.LogInfo = function LogInfo() {
-    console.log(`${this.name} has ${this.hp} hit points and ${this.strength} strength`);
-};
-
-
-// creates two unique employees using the "employee" constructor
-var michaelScott = new Employee("Michael Scott", "Manager", 25586, "Regional Manager", "mscott@dundermifflin.com");
-
-var dwightSchrute = new Employee("Michael Scott", "Manager", 25586, "Original Assistant to the Regional Manager", "dschrute@dundermifflin.com");
-
-console.log(employees);
+// addBatch();
+AddEmployee();
+render();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -110,4 +114,4 @@ console.log(employees);
 //     Employee();
     // await getEmployeeData();
     // writeFile(employeeData);
-// } 
+// }
